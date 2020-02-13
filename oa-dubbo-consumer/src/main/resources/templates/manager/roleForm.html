@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>注册</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/layer/layer.css}">
+<style>
+.inLine {
+	display: inline-block;
+}
+</style>
+</head>
+<body>
+	<div style="margin-top: 20px; text-aline: center;">
+		<form id="entityForm" class="form-inline"
+			th:action="@{/oa/api/v1/manager/permission/saveRole}"
+			th:method="post">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">角色：</label>
+				<div class="col-sm-8 inLine">
+					<input type="text" class="form-control required" id="name"
+						name="name" placeholder="角色"  th:value="${entity?.name}">
+					<input type="hidden" name="id" th:value="${entity?.id}" />
+				</div>
+
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-4">
+					<button type="submit" class="btn btn-info">提交</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript"
+		th:src="@{/js/common/jquery-3.4.1.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/js/common/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/messages_zh.js}"></script>
+	<script type="text/javascript" th:src="@{/js/layer.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util.js}"></script>
+	<script th:inline="javascript">
+		$(function() {
+			$("#entityForm").validate({
+				submitHandler : function(form) {
+					console.log("提交事件!");
+					submitForm(form);
+				}
+			});
+		});
+
+		function submitForm(form) {
+			$.ajax({
+				url : form.action,
+				type : 'post',
+				data : $(form).serialize(),
+				async : true,
+				success : function(data) {
+					if (data.code === 200) {
+						layer.msg('保存成功');
+						window.setTimeout(function() {
+							closeFrame();
+						}, 500);
+					} else {
+						layer.msg('保存失败');
+					}
+				}
+			});
+		}
+	</script>
+
+
+</body>
+</html>

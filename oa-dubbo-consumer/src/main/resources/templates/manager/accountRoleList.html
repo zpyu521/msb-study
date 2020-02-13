@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap-table.css}">
+<!-- <link rel="stylesheet" th:href="@{/css/layer/layer.css}"> -->
+<script th:src="@{/js/common/jquery-3.4.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/layer.js}"></script>
+<script type="text/javascript" th:src="@{/js/util.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/bootstrap/bootstrap-table.min.js}"></script>
+
+
+<style type="text/css">
+ul li {
+	display: inline-block;
+}
+
+a {
+	color: #41b0e5;
+}
+</style>
+<script type="text/javascript">
+</script>
+</head>
+<body>
+	<div class="container">
+		<div class="col-md-12 column">
+			<h3 class="text-center text-info">人员权限查看</h3>
+		</div>
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<table data-toggle="table">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>姓名</th>
+							<th>昵称</th>
+							<th>年龄</th>
+							<th>角色</th>
+							<th>权限</th>
+							<th>c</th>
+							<th>r</th>
+							<th>u</th>
+							<th>d</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item,statu : ${page.list}">
+							<td th:text="${statu.count  }+${page.prePage}*${page.pageSize}"></td>
+							<td th:text="${item.loginName}">
+							</td>
+							<td th:text="${item.nickName}"></td>
+							<td th:text="${item.age}"></td>
+							<td>
+								<th:block th:each="role : ${item.roleList}">[[${role.name}]]</th:block>
+							</td>
+							<td>
+								<th:block th:each="pms,sta : ${item.permissionList}">[[${sta.count}>1?',':'']][[${pms.uri}]]</th:block>
+							</td>
+							<td>
+								<th:block th:each="pms,sta : ${item.permissionList}">[[${sta.count}>1?',':'']][[${pms.c}]]</th:block>
+							</td>
+							<td>
+								<th:block th:each="pms,sta : ${item.permissionList}">[[${sta.count}>1?',':'']][[${pms.r}]]</th:block>
+							</td>
+							<td>
+								<th:block th:each="pms,sta : ${item.permissionList}">[[${sta.count}>1?',':'']][[${pms.u}]]</th:block>
+							</td>
+							<td>
+								<th:block th:each="pms,sta : ${item.permissionList}">[[${sta.count}>1?',':'']][[${pms.d}]]</th:block>
+							</td>
+						</tr>
+
+					</tbody>
+
+					<tfoot>
+
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+	<nav aria-label="Page navigation">
+		<div class="pagination" style="margin-left: 25px;">
+			<ul>
+				<li th:hidden="!${page.hasPreviousPage}">
+					<a
+						th:href="@{${page.prePage} == 0?'javascript:void(0);' :'/oa/manager/accountRoleList?pageNum='+${page.prePage}}">上一页&nbsp;</a>
+				</li>
+				<li th:each="num : ${page.navigatepageNums}">
+					<a th:href="@{'/oa/manager/accountRoleList?pageNum='+${num}}">[[${num}]]&nbsp;</a>
+				</li>
+				<li th:hidden="!${page.hasNextPage}">
+					<a
+						th:href="@{'/oa/manager/accountRoleList?pageNum='+${page.nextPage}}">下一页</a>
+				</li>
+				<span style="margin-left: 25px;">第[[${page.prePage}+1]]页</span>
+			</ul>
+		</div>
+	</nav>
+
+</body>
+</html>

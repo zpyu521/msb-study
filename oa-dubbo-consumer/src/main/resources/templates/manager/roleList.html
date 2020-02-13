@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet"
+	th:href="@{/css/bootstrap/bootstrap-table.min.css}">
+<script th:src="@{/js/common/jquery-3.4.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/layer.js}"></script>
+<script type="text/javascript" th:src="@{/js/util.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/bootstrap/bootstrap-table.min.js}"></script>
+<script th:src="@{/js/bootstrap/bootstrap-table-zh-CN.js}"></script>
+
+
+<style type="text/css">
+ul li {
+	display: inline-block;
+}
+
+a {
+	color: #41b0e5;
+}
+
+.marginLeft {
+	margin-left: 5px;
+}
+</style>
+<script type="text/javascript">
+	$(function() {
+		$('#add').on('click', entityForm);
+	});
+
+	function entityForm() {
+		layerOpen('/oa/manager/roleForm', "角色添加", '500px', '450px');
+	}
+	function update(obj){
+		layerOpen('/oa/manager/roleForm?id='+$(obj).data('roleid'),'角色修改','500px', '450px');
+	}
+	function deleteRole(obj){
+		del('/oa/api/v1/manager/permission/deleteRole',$(obj).data('roleid'));
+	}
+</script>
+</head>
+<body>
+	<div class="container">
+		<div class="col-md-12 column">
+			<h3 class="text-center text-info">角色管理</h3>
+		</div>
+		<div>
+			<p class="navbar-text navbar-left">
+				<a id="add" class="btn btn-primary btn-sm">添加</a>
+			</p>
+
+		</div>
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<!-- <table data-toggle="table"
+					class="table table-bordered table-hover table-striped"
+					data-row-style="rowStyle">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>角色</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="entity,statu : ${page.list}">
+							<td th:text="${(page.pageNum-1)*page.pageSize+statu.index+1}"></td>
+							<td>
+								<a th:text="${entity.name}"
+									th:onclick="'view('+${entity.id}+')'"></a>
+							</td>
+							<td>
+								<a class="btn btn-primary btn-sm"
+									th:onclick="'del('+${entity.id}+')'">删除</a>
+							</td>
+						</tr>
+
+					</tbody>
+				</table> -->
+
+
+				<h3 class="text-center text-info">boot-strap-table</h3>
+				<table id="table" data-toggle="table" data-locale="zh-CN"
+					data-show-search-clear-button="true"
+					class="table table-bordered table-hover table-striped table-sm">
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- <nav aria-label="Page navigation">
+		<div class="pagination" style="margin-left: 25px;">
+			<ul>
+				<li th:hidden="!${page.hasPreviousPage}">
+					<a
+						th:href="@{${page.prePage} == 0?'javascript:void(0);' :'/oa/manager/roleList?pageNum='+${page.prePage}}">上一页&nbsp;</a>
+				</li>
+				<li th:each="num : ${page.navigatepageNums}">
+					<a th:href="@{'/oa/manager/roleList?pageNum='+${num}}">[[${num}]]&nbsp;</a>
+				</li>
+				<li th:hidden="!${page.hasNextPage}">
+					<a th:href="@{'/oa/manager/roleList?pageNum='+${page.nextPage}}">下一页</a>
+				</li>
+				<span style="margin-left: 25px;">第[[${page.pageNum}]]页</span>
+				<span style="margin-left: 25px;">共[[${page.total}]]条记录</span>
+			</ul>
+		</div>
+	</nav> -->
+	<script type="text/javascript">
+		$('#table').bootstrapTable({
+			url : '/oa/manager/roleJson', //请求后台的URL（*）
+			method : 'post', //请求方式（*）
+			toolbar : '#toolbar', //工具按钮用哪个容器
+			striped : true, //是否显示行间隔色
+			cache : false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+			pagination : true, //是否显示分页（*）
+			sortable : true, //是否启用排序
+			sortOrder : "asc", //排序方式
+			// 			queryParams : queryParams,//传递参数（*）
+			sidePagination : "server", //分页方式：client客户端分页，server服务端分页（*）
+			pageNumber : 1, //初始化加载第一页，默认第一页
+			pageSize : 5, //每页的记录行数（*）
+			pageList : [ 5, 10, 15, 20 ], //可供选择的每页的行数（*）
+			search : true, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+			contentType : "application/x-www-form-urlencoded",
+			strictSearch : true,
+			showColumns : true, //是否显示所有的列
+			showRefresh : true, //是否显示刷新按钮
+			minimumCountColumns : 2, //最少允许的列数
+			clickToSelect : true, //是否启用点击选中行
+			// 			height : 700, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+			uniqueId : "no", //每一行的唯一标识，一般为主键列
+			showToggle : true, //是否显示详细视图和列表视图的切换按钮
+			cardView : false, //是否显示详细视图
+			detailView : false, //是否显示父子表
+			columns : [ {
+				checkbox:"true"
+			}, {
+				field : 'id',
+				title : 'ID'
+			}, {
+				field : 'name',
+				title : '名字'
+			}, {
+				title : '操作',
+				width : '150px',
+				formatter : operateFormatter
+			//自定义方法，添加操作按钮
+			}, ],
+			rowStyle : rowStyle
+		});
+
+		function operateFormatter(value, row, index) {//赋予的参数
+			
+			return [
+					'<a class="btn btn-info marginLeft btn-sm update" href="#" onclick="update(this)" data-roleId="'+row.id+'">编辑</a>',
+					'<a  class="btn btn-danger marginLeft btn-sm delete" href="#" onclick="deleteRole(this)" data-roleId="'+row.id+'">删除</a>' ]
+					.join('');
+		}
+
+		function queryParams(params) {
+			params.search = 8
+			return params
+		}
+		//行的颜色的变化
+		function rowStyle(row, index) {
+			if (index % 2 === 0) {
+				return {
+					css : {
+						color : 'red'
+					}
+				}
+			}
+			return {
+				css : {
+					color : 'blue'
+				}
+			}
+		}
+	</script>
+</body>
+</html>

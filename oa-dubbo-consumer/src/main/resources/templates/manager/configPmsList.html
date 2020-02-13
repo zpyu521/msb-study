@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap-table.css}">
+<!-- <link rel="stylesheet" th:href="@{/css/layer/layer.css}"> -->
+<script th:src="@{/js/common/jquery-3.4.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/layer.js}"></script>
+<script type="text/javascript" th:src="@{/js/util.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/bootstrap/bootstrap-table.min.js}"></script>
+
+
+<style type="text/css">
+ul li {
+	display: inline-block;
+}
+
+a {
+	color: #41b0e5;
+}
+</style>
+<script type="text/javascript" th:inline="javascript">
+	$(function() {
+		$('#config').on(
+				'click',
+				function() {
+					var checkeds = $(':checkbox:checked');
+					if(checkeds.length == 0){
+						layer.alert('请先选择', {icon: 6});
+						return;
+					}
+					var roleId = [[${roleId}]];
+					var arr = new Array();
+					var entity = {id:roleId,permissionList:arr};
+					checkeds.each(function(i,obj){
+						arr[i]={'id':obj.value};
+					});
+					$.ajax({
+						url:'/oa/api/v1/manager/permission/saveRolePermission',
+						type:'post',
+						data:JSON.stringify(entity),
+						contentType:'application/json',
+						success:function(data){
+							if(data.code == 200){
+								layer.msg('保存成功',{
+									icon : 6
+								});
+								setTimeout(function(){closeFrame();},800)
+							}else{
+								layer.alert('保存失败',6);
+							}
+							
+						}
+					});
+				});
+	});
+</script>
+</head>
+<body>
+	<div class="container">
+		<div class="col-md-12 column">
+			<h3 class="text-center text-info">权限管理</h3>
+		</div>
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<table data-toggle="table">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>名称</th>
+							<th>url</th>
+							<th>c</th>
+							<th>r</th>
+							<th>u</th>
+							<th>d</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item,statu : ${page.list}">
+							<td>
+								[[${statu.count }+${page.prePage}*${page.pageSize}]]&nbsp;
+								<input type="checkbox" th:value="${item.id}">
+							</td>
+							<td th:text="${item.name}"></td>
+							<td th:text="${item.uri}"></td>
+							<td th:text="${item.c}"></td>
+							<td th:text="${item.r}"></td>
+							<td th:text="${item.u}"></td>
+							<td th:text="${item.d}"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<a class="btn btn-primary btn-sm" id="config" href="javascript:void(0)">配置</a>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+	<nav aria-label="Page navigation">
+		<div class="pagination" style="margin-left: 25px;">
+			<ul>
+				<li th:hidden="!${page.hasPreviousPage}">
+					<a
+						th:href="@{${page.prePage} == 0?'javascript:void(0);' :'/oa/manager/configPms?pageNum='+${page.prePage}}">上一页&nbsp;</a>
+				</li>
+				<li th:each="num : ${page.navigatepageNums}">
+					<a th:href="@{'/oa/manager/configPms?pageNum='+${num}}">[[${num}]]&nbsp;</a>
+				</li>
+				<li th:hidden="!${page.hasNextPage}">
+					<a th:href="@{'/oa/manager/configPms?pageNum='+${page.nextPage}}">下一页</a>
+				</li>
+				<span style="margin-left: 25px;">第[[${page.prePage}+1]]页</span>
+			</ul>
+		</div>
+	</nav>
+
+</body>
+</html>

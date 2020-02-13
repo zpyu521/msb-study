@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>注册</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/layer/layer.css}">
+</head>
+<body>
+	<div style="margin-top: 20px; text-aline: center;">
+		<form id="inputForm" class="form-horizontal" th:action="@{save}"
+			th:method="post" enctype="multipart/form-data">
+			<div class="layui-form-item">
+				<label class="layui-form-label">账号：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="loginName" placeholder="请输入用户名"
+						class="layui-input required" th:value="${account.loginName}">
+					<input type="hidden" name="id" id="accountId"
+						th:value="${account.id}">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">密码：</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password"
+						th:value="${account.password}" placeholder="请输入密码"
+						class="layui-input required">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">昵称：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="nickName" placeholder="请输入昵称"
+						th:value="${account.password}" class="layui-input ">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">年龄：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="age" placeholder="请输入昵称"
+						th:value="${account.age}" class="layui-input required number">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">地址：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="location" placeholder="请输入地址"
+						th:value="${account.location}" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item"
+				style="text-align: left; margin-left: 20px;">
+				<input id="submit" type="submit" class="layui-btn"
+					style="background-color: #037acb;">
+			</div>
+
+			<div th:class="${account.id}?'':'hidden'"
+				style="width: 168px; position: absolute; right: 32px; top: 22px; height: 166px; border: solid 1px dodgerblue;">
+				<img alt="个人信息"
+					th:src="'/oa/attachment/getBytes?recordId='+${account?.id}"
+					style="width: 168px; height: 166px;"> <input type="file"
+					id="img" name="img" multiple="multiple" />
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript"
+		th:src="@{/js/common/jquery-3.4.1.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/js/common/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/messages_zh.js}"></script>
+	<script type="text/javascript" th:src="@{/js/layer.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util.js}"></script>
+	<script th:inline="javascript">
+		$(function() {
+			$("#inputForm").validate({
+				submitHandler : function(form) {
+					console.log("提交事件!");
+					if($('#img').val()){
+						
+						var accountId = $('#accountId').val()
+						var formData = new FormData();
+						formData.append('recordId',accountId);
+						formData.append('file',$('#img')[0].files[0]);
+						$.ajax({
+							url:'/oa/attachment/save',
+							type:'post',
+							data: formData,
+							async:true,
+							processData: false,  // 告诉jQuery不要去处理发送的数据
+					        contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+							success:function(data){
+								if(data){
+									submitForm(form);
+								}
+							}
+						});
+					}else{
+						var account = [[${session.account}]]
+						if(!account){
+							form.action="/oa/account/regist/save";
+						}
+						submitForm(form);
+					}
+				}
+			});
+		});
+		
+		
+		function submitForm(form){
+			$.ajax({
+				url : form.action,
+				type : 'post',
+				data : $(form).serialize(),
+				async : true,
+				success : function(data) {
+					if (data === 200) {
+						layer.msg('保存成功');
+						window.setTimeout(function() {
+							closeFrame();
+						}, 500);
+					} else {
+						layer.msg('保存失败');
+					}
+				}
+			});
+		}
+	</script>
+
+
+</body>
+</html>
